@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+.env.*
+
+# OS junk files
+.DS_Store
+Thumbs.db
+
+# Python virtual environment
+venv/
+env/
+
+# Downloads and media
+downloads/
+*.jpg
+*.png
+*.mp4
+*.webm
+
+# Logs
+*.log
+
+# IDE config
+.vscode/
+.idea/
+
+# Heroku build files (if auto-generated)
+*.sqlite3
