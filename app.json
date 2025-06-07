@@ -1,0 +1,35 @@
+{
+  "name": "NSFW Deleter Bot",
+  "description": "Telegram bot to auto-delete NSFW and old media. Built with Python and deployable on Heroku.",
+  "repository": "https://github.com/yourusername/nsfw-deleter-bot",
+  "keywords": ["telegram", "nsfw", "bot", "heroku", "python"],
+  "env": {
+    "BOT_TOKEN": {
+      "description": "Your bot's Telegram token",
+      "required": true
+    },
+    "DEEPAI_API_KEY": {
+      "description": "Your DeepAI NSFW API key",
+      "required": true
+    },
+    "LOG_CHANNEL_ID": {
+      "description": "Telegram channel ID to send logs to (optional, with -100 prefix)",
+      "required": false
+    },
+    "CLEANUP_DELAY_SECONDS": {
+      "description": "Time in seconds after which clean media should be auto-deleted",
+      "value": "900",
+      "required": false
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
