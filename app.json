@@ -1,30 +1,28 @@
 {
   "name": "NSFW Deleter Bot",
-  "description": "Telegram bot to auto-delete NSFW and old media. Built with Python and deployable on Heroku.",
+  "description": "Telegram bot to delete NSFW media instantly and clean all media after a set delay. Built with Python and Sightengine.",
   "repository": "https://github.com/yourusername/nsfw-deleter-bot",
-  "keywords": ["telegram", "nsfw", "bot", "heroku", "python"],
+  "keywords": ["telegram", "bot", "nsfw", "moderation", "sightengine"],
   "env": {
     "BOT_TOKEN": {
-      "description": "Your bot's Telegram token",
+      "description": "Your bot token from BotFather",
       "required": true
     },
-    "DEEPAI_API_KEY": {
-      "description": "Your DeepAI NSFW API key",
+    "SIGHTENGINE_USER": {
+      "description": "Your Sightengine API user (https://sightengine.com/account/api/)",
+      "required": true
+    },
+    "SIGHTENGINE_SECRET": {
+      "description": "Your Sightengine API secret key",
       "required": true
     },
     "LOG_CHANNEL_ID": {
-      "description": "Telegram channel ID to send logs to (optional, with -100 prefix)",
+      "description": "Optional: Private log channel ID for new user logging",
       "required": false
     },
     "CLEANUP_DELAY_SECONDS": {
-      "description": "Time in seconds after which clean media should be auto-deleted",
-      "value": "900",
+      "description": "Media auto-delete delay in seconds (default: 900)",
       "required": false
-    }
-  },
-  "formation": {
-    "worker": {
-      "quantity": 1
     }
   },
   "buildpacks": [
