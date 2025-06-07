@@ -1,17 +1,19 @@
 # handlers.py
 
-from telegram import Update, MessageEntity
-from telegram.ext import ContextTypes, MessageHandler, filters, CommandHandler
+from telegram import Update
+from telegram.ext import ContextTypes, MessageHandler, filters
 from utils.nsfw_check import is_nsfw
 from logger import log_user_if_new
 from config import CLEANUP_DELAY_SECONDS
 import asyncio
+import tempfile
+import os
 
 # Track safe media messages for delayed deletion
 safe_media = []
 
 async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message or not update.message.photo and not update.message.video:
+    if not update.message or (not update.message.photo and not update.message.video):
         return
 
     user = update.effective_user
@@ -20,18 +22,27 @@ async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     file_id = message.photo[-1].file_id if message.photo else message.video.file_id
     file = await context.bot.get_file(file_id)
-    file_path = await file.download_to_drive()
 
-    # Check for NSFW
+    # 🛠️ Use tempfile to avoid permanent files
+    suffix = ".jpg" if message.photo else ".mp4"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        await file.download_to_drive(tmp.name)
+        file_path = tmp.name
+
+    # 🔍 Check for NSFW content
     if await is_nsfw(file_path):
         await message.delete()
+        os.remove(file_path)
         return
 
-    # Not NSFW — log the user if new
+    # ✅ Not NSFW — log user if new
     await log_user_if_new(user, context)
 
-    # Store message for delayed deletion
+    # 🧹 Schedule message for delayed deletion
     safe_media.append((chat.id, message.message_id, asyncio.get_event_loop().time()))
+
+    # 🧼 Remove temp file
+    os.remove(file_path)
 
 async def cleanup_safe_media(context: ContextTypes.DEFAULT_TYPE):
     current_time = asyncio.get_event_loop().time()
